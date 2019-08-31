@@ -1,0 +1,20 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#p5_loading {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#p5_loading img {
+    width: 5rem;
+    height: 5rem;
+}

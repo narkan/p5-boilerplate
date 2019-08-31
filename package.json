@@ -1,0 +1,24 @@
+{
+  "name": "p5-boilerplate",
+  "version": "1.0.0",
+  "description": "A p5 boilerplate project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/narkan/p5-boilerplate.git"
+  },
+  "keywords": [
+    "p5",
+    "game",
+    "js"
+  ],
+  "author": "Toby Cosh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/narkan/p5-boilerplate/issues"
+  },
+  "homepage": "https://github.com/narkan/p5-boilerplate#readme"
+}
