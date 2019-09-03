@@ -1,9 +1,10 @@
 class Airplane {
-    constructor() {
-        this.x = 100;
-        this.y = window.innerHeight / 2;
-        this.angle = 270;
-        this.speed = BASE_SPEED;
+    constructor(id, x, y) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.angle = 180;
+        this.speed = AIRPLANE_SPEED;
         this.initialMouse = true;
         this.lastMouseX = 0;
     }
@@ -11,6 +12,9 @@ class Airplane {
     next() {
         this.move();
         this.rotate();
+       // this.velocity();
+          text('speed: ' + this.speed, 200, 10);
+
     }
 
     /**
@@ -33,7 +37,6 @@ class Airplane {
 
         } else {
 
-            text('Angle: ' + this.angle + '\nmouseX: ' + mouseX + '\nlastMouseX: ' + this.lastMouseX + '\nDiff: ' + difference, 10, 10);
             /**
              * Rotation calculation
              *
@@ -44,7 +47,25 @@ class Airplane {
 
             this.angle -= difference;
 
+            // Keep the angle between 0 and 360 degrees
+            if (this.angle > 360) this.angle -= 360;
+            if (this.angle < 0) this.angle += 360;
+
             this.lastMouseX = mouseX;
+
+            text('Angle: ' + this.angle + '\nmouseX: ' + mouseX + '\nlastMouseX: ' + this.lastMouseX + '\nDiff: ' + difference, 10, 10);
+        }
+    }
+
+    velocity(delta) {
+        // Deceleration
+        if (delta < 0 && this.speed >= 0) {
+            this.speed += delta;
+        }
+
+        // Acceleration
+        if (delta > 0 && this.speed <= AIRPLANE_MAX_SPEED) {
+            this.speed += delta;
         }
     }
 

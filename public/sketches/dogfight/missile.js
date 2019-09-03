@@ -3,7 +3,7 @@ class Missile {
         this.x = x;
         this.y = y;
         this.angle = angle;
-        this.speed = speed * 3;     //  + (0.5 * speed * Math.random());
+        this.speed = MISSILE_SPEED;     //  + (0.5 * MISSILE_SPEED * Math.random());
         this.distance = 0;  // Distance travelled
 
         this.detonated = false;
@@ -15,7 +15,7 @@ class Missile {
 
     next() {
 
-        text('maxBlastRadius: ' + this.maxBlastRadius + '\nblastRadius: ' + this.blastRadius + '\nblastChange: ' + this.blastChange + '\nexpired: ' + this.expired, 200, 10);
+     //   text('maxBlastRadius: ' + this.maxBlastRadius + '\nblastRadius: ' + this.blastRadius + '\nblastChange: ' + this.blastChange + '\nexpired: ' + this.expired, 200, 10);
 
 
         if (this.expired === false) {
@@ -44,7 +44,7 @@ class Missile {
             this.detonated = true;
 
             // Reduce moving speed post-detonation
-            this.speed /= 2;
+            this.speed *= SPEED_AFTER_DETONATION;
         }
     }
 
