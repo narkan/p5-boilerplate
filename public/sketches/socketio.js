@@ -6,7 +6,7 @@ function preload() {
 }
 
 function setup() {
-    socket = io.connect('http://localhost:3000');
+    socket = io.connect('http://localhost:4000');
 
     // On receiving a 'mouse' event from the server, execute newDrawaing func
     socket.on('mouse', newDrawing);

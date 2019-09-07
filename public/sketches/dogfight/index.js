@@ -25,9 +25,11 @@ function preload() {
 
 function setup() {
 
-    // ṣocket = io.connect('http://localhost:4000');
-    ṣocket = io();
-    socket.emit("chat message", "Hello");
+    socket = io.connect('http://localhost:4000');
+    // ṣocket = io();
+
+    socket.on('mouse', newDrawing);
+
 
     // On receiving a 'new connection' event fr
     // om the server, execute newConnection to create a new plane
@@ -56,6 +58,7 @@ function setup() {
 }
 
 function draw() {
+
     background(200);
 
     for (let i = 0; i < airplanes.length; i++) {
@@ -142,8 +145,12 @@ function keyPressed() {
  * @param data
  */
 function newDrawing(data) {
-    fill(0,255,0);
-    ellipse(data.x, data.y, 80, 80);
+    push();
+        translate(data.x, data.y);
+        fill(0,255,0);
+        ellipse(0,0, 80, 80);
+        console.log(data.x + " " + data.y);
+    pop();
 }
 
 function mouseDragged(){
@@ -152,5 +159,7 @@ function mouseDragged(){
         x: mouseX,
         y: mouseY
     };
-    socket_client.emit('mouse', data);
+    socket.emit('mouse', data);
+    // socket.emit("chat message", "Hello");
+
 }

@@ -26,7 +26,6 @@ var io = socket(server);
 // On the 'connection' event, call the newConnection callback
 io.sockets.on('connection', newConnection);
 
-io.sockets.on('chat message', () => console.log('received'));
 
 // console.log(io);
 // When this is executed at the 'connection' event, the 'socket' parameter will be passed into it
@@ -37,6 +36,7 @@ function newConnection(socket) {
 
         // Add event handler for when a 'mouse' broadcast is received
         socket.on('mouse', mouseMsg);
+        // socket.on('chat message', () => console.log('received'));
     } catch(err) {
         console.error('Could not start the server: ' + err);
     }
