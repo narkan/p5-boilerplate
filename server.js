@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
 
-var PORT = 3000;
+var PORT = 4000;
 
 try {
     var server = app.listen(PORT);
@@ -26,9 +26,13 @@ var io = socket(server);
 // On the 'connection' event, call the newConnection callback
 io.sockets.on('connection', newConnection);
 
+io.sockets.on('chat message', () => console.log('received'));
+
+// console.log(io);
 // When this is executed at the 'connection' event, the 'socket' parameter will be passed into it
 function newConnection(socket) {
     try {
+        console.log('Num sockets: ' + socket.length);
         console.log('New connection - socket id: ' + socket.id);
 
         // Add event handler for when a 'mouse' broadcast is received
@@ -47,4 +51,8 @@ function newConnection(socket) {
 
         // console.log(data);
     }
+
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
 }

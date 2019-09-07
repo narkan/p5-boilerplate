@@ -20,15 +20,19 @@ const BLAST_SPEED = 5;
 const SPEED_AFTER_DETONATION = 0.1;  // Percentage of original speed
 
 function preload() {
-    img = loadImage('./img/bg.jpg');
+    //img = loadImage('./img/bg.jpg');
 }
 
 function setup() {
 
-    // ṣocket = io.connect('http://localhost:3000');
+    // ṣocket = io.connect('http://localhost:4000');
+    ṣocket = io();
+    socket.emit("chat message", "Hello");
 
-    // On receiving a 'new connection' event from the server, execute newConnection to create a new plane
+    // On receiving a 'new connection' event fr
+    // om the server, execute newConnection to create a new plane
     // socket.on('connection', newPlane);
+    // socket.on('connection', () => '' );
 
     // On receiving a 'mouse' event from the server, execute newDrawaing func
     // socket.on('mouse', newDrawing);
@@ -148,5 +152,5 @@ function mouseDragged(){
         x: mouseX,
         y: mouseY
     };
-    socket.emit('mouse', data);
+    socket_client.emit('mouse', data);
 }
