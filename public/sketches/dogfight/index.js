@@ -28,6 +28,8 @@ function setup() {
     socket = io.connect('http://localhost:4000');
     // ṣocket = io();
 
+    socket.on('currentPlayers', displayPlayers);
+
     socket.on('mouse', newDrawing);
 
 
@@ -59,7 +61,7 @@ function setup() {
 
 function draw() {
 
-    background(200);
+   // background(200);
 
     for (let i = 0; i < airplanes.length; i++) {
         airplanes[i].render();
@@ -77,6 +79,11 @@ function draw() {
 
     // text('missiles.length: ' + missiles.length, 400, 10);
 
+}
+
+
+function displayPlayers(players) {
+    console.log(players);
 }
 
 function checkKeys() {
@@ -147,8 +154,8 @@ function keyPressed() {
 function newDrawing(data) {
     push();
         translate(data.x, data.y);
-        fill(0,255,0);
         ellipse(0,0, 80, 80);
+        fill(0);
         console.log(data.x + " " + data.y);
     pop();
 }
