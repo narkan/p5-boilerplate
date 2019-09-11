@@ -32,10 +32,8 @@ var players = {};
 // When this is executed at the 'connection' event, the 'socket' parameter will be passed into it
 function newConnection(socket) {
     try {
-        console.log('Num sockets: ' + socket.length);
+        // console.log('Num sockets: ' + socket.length);
         console.log('New connection - socket id: ' + socket.id);
-
-
 
         // create a new player and add it to our players object
         players[socket.id] = {
@@ -47,7 +45,7 @@ function newConnection(socket) {
         };
         // send the players object to the new player
         socket.emit('currentPlayers', players);
-        // update all other players of the new player
+        // update all other players about the new player
         socket.broadcast.emit('newPlayer', players[socket.id]);
 
 
@@ -73,7 +71,25 @@ function newConnection(socket) {
 
     socket.on('disconnect', function () {
 
-        // players.delete(socket.id, 1);
-        console.log('user disconnected');
+        // Create a new array without the disconnected socket.id object
+        let newPlayers = {};
+
+        console.log('Starts. Num conns = ' + players.length);
+        console.log(players);
+
+        for(let i = 0; i < players.length; i++) {
+            console.log('newPlayers' + newPlayers.i);
+            console.log('players' + players.i);
+            if(players[socket.id] !== socket.id) {
+                newPlayers[socket.id] = players[socket.id];
+            }
+        }
+
+        players = newPlayers;
+
+        console.log('Old players');
+        console.log(players);
+        console.log('New players');
+        console.log(players);
     });
 }
