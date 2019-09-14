@@ -37,13 +37,13 @@ function newConnection(socket) {
 
         // create a new player and add it to our players object
         players[socket.id] = {
-            rotation: 0,
-            x: Math.floor(Math.random() * 700) + 50,
-            y: Math.floor(Math.random() * 500) + 50,
-            playerId: socket.id,
-            team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
+            angle: 180,
+            x: Math.floor(Math.random() * 700),
+            y: Math.floor(Math.random() * 500),
+            playerId: socket.id
+            // team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
         };
-        // send the players object to the new player
+        // send the players' object to the new player
         socket.emit('currentPlayers', players);
         // update all other players about the new player
         socket.broadcast.emit('newPlayer', players[socket.id]);
@@ -71,25 +71,15 @@ function newConnection(socket) {
 
     socket.on('disconnect', function () {
 
-        // Create a new array without the disconnected socket.id object
-        let newPlayers = {};
+        delete players[socket.id];
+        // emit a message to all players to remove this player
+        io.emit('disconnect', socket.id);
 
-        console.log('Starts. Num conns = ' + players.length);
-        console.log(players);
+        console.log('Socket disconnected: ' + socket.id);
 
-        for(let i = 0; i < players.length; i++) {
-            console.log('newPlayers' + newPlayers.i);
-            console.log('players' + players.i);
-            if(players[socket.id] !== socket.id) {
-                newPlayers[socket.id] = players[socket.id];
-            }
-        }
+        // for (let prop in io) {
+        //     console.log(prop);
+        // }
 
-        players = newPlayers;
-
-        console.log('Old players');
-        console.log(players);
-        console.log('New players');
-        console.log(players);
     });
 }

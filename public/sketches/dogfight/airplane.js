@@ -1,6 +1,6 @@
 class Airplane {
-    constructor(id, x, y) {
-        this.id = id;
+    constructor(playerId, x, y) {
+        this.playerId = playerId;
         this.x = x;
         this.y = y;
         this.angle = 180;

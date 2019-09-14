@@ -1,13 +1,18 @@
+/**
+ * Globals
+ */
 
-// Globals
-let img;
+// socket.io
 let socket;
-let airplane;
-let airplanes = [];
+
+// p5
+let img;
+let myAirplane;
+let otherAirplanes = [];
 let missiles = [];
 
 // Constants
-const AIRPLANE_SIZE = 20;
+const AIRPLANE_SIZE = 100;
 const AIRPLANE_SPEED = 0.7;
 const AIRPLANE_MAX_SPEED = 5;
 const ACCELERATION = 0.1;
@@ -24,14 +29,56 @@ function preload() {
 }
 
 function setup() {
+    angleMode(DEGREES);
 
-    socket = io.connect('http://localhost:4000');
-    // ṣocket = io();
+    let myCanvas = createCanvas(900, 700);
+    myCanvas.parent('p5-wrap');
 
-    socket.on('currentPlayers', displayPlayers);
+
+    /**
+     * Sockets
+     */
+
+    // The client should find the current io connection automatically. Else it can be specified explicitly
+    socket = io();
+    // socket = io.connect('http://localhost:4000');
+
+
+
+    // Create function to handle the event where we receive the object containing all the players from the server
+    // Loop through all the players to extract the player for this client
+    // Create new Airplane for this player - assign to airplanes[0]
+    socket.on('currentPlayers', function (players) {
+        Object.keys(players).forEach(function (id) {
+            if (players[id].playerId === socket.id) {
+                addThisPlayerAirplane(players[id]);
+            } else {
+                addOtherPlayersAirplanes(players[id]);
+            }
+        });
+    });
+
+    socket.on('newPlayer', function (playerInfo) {
+        addOtherPlayersAirplanes(playerInfo);
+    });
+
+    socket.on('disconnect', function (playerId) {
+
+        // console.log("All other airplanes: " + JSON.stringify(otherAirplanes));
+
+        for (let i = otherAirplanes.length; i > 0; i--) {
+            // console.log(i);
+            // console.log("Disconnect playerId: " + playerId);
+            // console.log("This airplane: " + JSON.stringify(otherAirplanes[i-1]));
+            if (playerId === otherAirplanes[i-1].playerId) {
+                otherAirplanes.splice(i-1, 1);
+            }
+        }
+        // console.log("After loop");
+        // console.log(JSON.stringify(otherAirplanes));
+    });
 
     socket.on('mouse', newDrawing);
-
 
     // On receiving a 'new connection' event fr
     // om the server, execute newConnection to create a new plane
@@ -41,31 +88,36 @@ function setup() {
     // On receiving a 'mouse' event from the server, execute newDrawaing func
     // socket.on('mouse', newDrawing);
 
-    let myCanvas = createCanvas(600, 400);
-    myCanvas.parent('p5-wrap');
 
     // drawingContext.shadowOffsetX = 5;
     // drawingContext.shadowOffsetY = -5;
     // drawingContext.shadowBlur = 10;
     // drawingContext.shadowColor = "gray";
-    angleMode(DEGREES);
 
-    airplane0 = new Airplane(0, 100, window.innerHeight / 2);
-    airplane1 = new Airplane(1, 300, window.innerHeight / 2);
 
-    airplanes.push(airplane0);
-    airplanes.push(airplane1);
+    // airplane0 = new Airplane(0, 100, window.innerHeight / 2);
+    // airplane1 = new Airplane(1, 300, window.innerHeight / 2);
 
-    console.log(airplanes);
+    // airplanes.push(airplane0);
+    // airplanes.push(airplane1);
+
+    // console.log(airplanes);
 }
 
 function draw() {
 
    // background(200);
 
-    for (let i = 0; i < airplanes.length; i++) {
-        airplanes[i].render();
-        airplanes[i].next();
+    // Move my airplane
+    if (myAirplane) {
+        myAirplane.render();
+        myAirplane.next();
+    }
+
+    // Move other players' airplanes
+    for (let i = 0; i < otherAirplanes.length; i++) {
+        otherAirplanes[i].render();
+        otherAirplanes[i].next();
     }
 
     for (let i = 0; i < missiles.length; i++) {
@@ -81,10 +133,40 @@ function draw() {
 
 }
 
-
-function displayPlayers(players) {
-    console.log(players);
+// Add the airplane for this player
+function addThisPlayerAirplane(playerInfo) {
+    myAirplane = new Airplane(playerInfo.playerId, playerInfo.x, playerInfo.y);
+    console.log("myAirplane: " + myAirplane.playerId + " " + myAirplane.x);
 }
+
+
+// Add airplanes for the other players
+function addOtherPlayersAirplanes(playerInfo) {
+    otherAirplanes.push(new Airplane(playerInfo.playerId, playerInfo.x, playerInfo.y));
+}
+
+
+// Add new players
+function addNewPlayersAirplanes(playerInfo) {
+    const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    if (playerInfo.team === 'blue') {
+        otherPlayer.setTint(0x0000ff);
+    } else {
+        otherPlayer.setTint(0xff0000);
+    }
+    otherPlayer.playerId = playerInfo.playerId;
+    self.otherPlayers.add(otherPlayer);
+}
+
+//
+// function currentPlayers(players) {
+//     players = players;
+//     console.log(players);
+// }
+
+// function displayPlayers(players) {
+//     console.log(players);
+// }
 
 function checkKeys() {
     // Airplane 1
@@ -116,6 +198,9 @@ function removeExpiredMissiles() {
 
 
 function mousePressed() {
+
+    console.log("Num other players" + otherAirplanes.length);
+
     // let missile = new Missile(
     //     airplane.x,
     //     airplane.y,
