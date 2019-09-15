@@ -46,36 +46,54 @@ function setup() {
 
 
     // Create function to handle the event where we receive the object containing all the players from the server
-    // Loop through all the players to extract the player for this client
-    // Create new Airplane for this player - assign to airplanes[0]
+    // Loop through all the other players and add to otherAirplanes array
+
     socket.on('currentPlayers', function (players) {
-        Object.keys(players).forEach(function (id) {
-            if (players[id].playerId === socket.id) {
-                addThisPlayerAirplane(players[id]);
+
+        for (let i = 0; i < players.length; i++) {
+            console.log("i = " + i + " ... " + JSON.stringify(players[i].playerId));
+                         // let thisOtherPlayer = new Airplane(players[i].playerId, players[i].x, players[i].y)
+
+            if (players[i].playerId === socket.id) {
+                // This is my plane - add to myAirplane
+                addThisPlayerAirplane(players[i]);
             } else {
-                addOtherPlayersAirplanes(players[id]);
+                // This is one of the other players' airplanes - add to otherAirplanes
+                addOtherPlayersAirplanes(players[i]);
             }
-        });
+        }
+
+        // Object.keys(players).forEach(function (id) {
+        //     if (players[id].playerId === socket.id) {
+        //         addThisPlayerAirplane(players[id]);
+        //     } else {
+        //         addOtherPlayersAirplanes(players[id]);
+        //     }
+        // });
     });
 
     socket.on('newPlayer', function (playerInfo) {
         addOtherPlayersAirplanes(playerInfo);
+
+        console.log("All OTHER airplanes: " + JSON.stringify(otherAirplanes));
+
     });
 
     socket.on('disconnect', function (playerId) {
 
-        // console.log("All other airplanes: " + JSON.stringify(otherAirplanes));
+        console.log("  ");
+        console.log("Disconnecting player: " + playerId);
+        console.log("All other airplanes: " + JSON.stringify(otherAirplanes));
 
-        for (let i = otherAirplanes.length; i > 0; i--) {
-            // console.log(i);
-            // console.log("Disconnect playerId: " + playerId);
-            // console.log("This airplane: " + JSON.stringify(otherAirplanes[i-1]));
-            if (playerId === otherAirplanes[i-1].playerId) {
-                otherAirplanes.splice(i-1, 1);
+        for (let i = otherAirplanes.length-1; i >= 0; i--) {
+            console.log("i = " + i + " ... " + JSON.stringify(otherAirplanes[i].playerId));
+            if (playerId === otherAirplanes[i].playerId) {
+                otherAirplanes.splice(i, 1);
+                console.log("... Removed");
             }
         }
-        // console.log("After loop");
-        // console.log(JSON.stringify(otherAirplanes));
+        console.log("Other players, after loop...");
+        console.log(JSON.stringify(otherAirplanes));
     });
 
     socket.on('mouse', newDrawing);

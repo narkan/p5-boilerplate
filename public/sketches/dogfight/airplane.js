@@ -73,7 +73,12 @@ class Airplane {
         push();
         translate(this.x, this.y);
         rotate(this.angle);
-        fill(255);
+
+        if (this.playerId === socket.id) {
+            fill(255);
+        } else {
+            fill(200,0,0);
+        }
 
         triangle(
                 -(AIRPLANE_SIZE / 2), -(AIRPLANE_SIZE / 2),
